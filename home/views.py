@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponse
+import os
 import json
 import random
 from datetime import datetime, timedelta
@@ -14,8 +15,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-FROM_EMAIL = 'gokulrajendran96@gmail.com'
-PASSWORD = 'nqptgtyjljvkghum'
+FROM_EMAIL = os.environ.get('FROM_EMAIL')
+PASSWORD = os.environ.get('PASSWORD')
 first_run = True
 
 
@@ -46,18 +47,15 @@ Enter the OTP to create new password. This OTP is valid for only 30 minutes.
 {user.otp}
     ''', 'plain')
 
-    msg['From'] = formataddr(('YouTube by Gokul', FROM_EMAIL))
-    msg['To'] = 'gokulrealsteel05@gmail.com'
-    # msg['To'] = user.email
+    msg['From'] = formataddr(('Tube by Gokul', FROM_EMAIL))
+    msg['To'] = user.email
     msg['Subject'] = 'Password Reset'
     msg.attach(reset_msg_html)
     msg.attach(reset_msg_text)
     with smtplib.SMTP('smtp.gmail.com', 587) as connection:
         connection.starttls()
         connection.login(FROM_EMAIL, PASSWORD)
-        connection.sendmail(FROM_EMAIL, 'gokulrealsteel05@gmail.com', msg=msg.as_string().encode('utf-8'))
-        # connection.sendmail(FROM_EMAIL, user.email, msg=msg.as_string().encode('utf-8'))
-    print('Mail sent.')
+        connection.sendmail(FROM_EMAIL, user.email, msg=msg.as_string().encode('utf-8'))
 
 
 def addToLibrary(request, video):
@@ -115,13 +113,7 @@ def cleanVideoUploadForm(request):
 
 def getVideoTags(object):
     tags = [tag.tag for tag in object.tags.all()]
-    print(tags)
     return tags
-
-
-# def getVideoTagsId(object):
-    # tags = [tag.id for tag in object.tags.all()]
-    # return tags
 
 
 def updateVideoTags(request, video):
@@ -163,12 +155,11 @@ def createNotification(video_id, channel_id):
 def checkUsername(request):
     if request.method == "POST":
         username = request.POST.get("username")
-        user = User.objects.get(username=username)
-        if user:
-        # for user in users:
-            # if user.username == username:
+        try:
+            user = User.objects.get(username=username)
             return HttpResponse("true")
-        return HttpResponse("false")
+        except:
+            return HttpResponse("false")
 
 
 def registerUser(request):
@@ -176,7 +167,6 @@ def registerUser(request):
         return redirect('home')
     
     form = UserForm()
-    print(request.method)
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
 
@@ -208,14 +198,7 @@ def generateResetLink(request):
         user = User.objects.get(email=email)
         form = PasswordResetForm(request.POST, instance=user)
         otp = request.POST.get('otp')
-        print(user.otp)
-        print(user.password)
-        print(request.POST.get('password1'))
-        print(otp)
         if otp:
-            print(user.password_expiry_time.replace(tzinfo=None))
-            print(datetime.now())
-            print(user.password_expiry_time.replace(tzinfo=None) < datetime.now())
             if user.password_expiry_time.replace(tzinfo=None) < datetime.now():
                 data = {'otp': ['OTP expired!']}
                 return HttpResponse(json.dumps(data))
@@ -225,34 +208,22 @@ def generateResetLink(request):
                 return HttpResponse(json.dumps(data))
         
             else:
-            # print(request.POST)
-                print('otp matched')
                 if form.is_valid():
                     user.set_password(request.POST.get('password1'))
                     user.save()
                     messages.success(request, 'Password changed succesfully.')
                     return HttpResponse(redirect(home).url)
                 else:
-                    # form.errors.update(data)
                     return HttpResponse(json.dumps(form.errors))
         else:
             if first_run:
                 first_run = False
-                print('first run')
                 generateOTP(email)
-                print('generate email')
                 data = {'otp': []}
                 return HttpResponse(json.dumps(data))
             else:
                 data = {'otp': ['OTP cannot be empty.']}
                 return HttpResponse(json.dumps(data))
-    # if request.method == 'POST':
-    #     user = User.objects.get(email=request.POST.get('email'))
-    #     print(user)
-    #     return HttpResponse('true')
-    # return HttpResponse('false')
-    # print(user.password_expiry_time > datetime.now())
-    # sendMail(user, OTP)
 
 
 def forgetPassword(request):
@@ -263,36 +234,13 @@ def forgetPassword(request):
     form = PasswordResetForm()
     if request.GET.get('csrfmiddlewaretoken'):
         email = request.GET.get('email')
-        print(email)
         try:
             first_run = True
             user = User.objects.get(email=email)
-            print(user)
             return HttpResponse('true')
         except:
             return HttpResponse('false')
     
-    # if request.method == "POST":
-    #     form = PasswordResetForm()
-    #     otp = request.POST.get('otp')
-    #     print(request.POST)
-    #     if form.is_valid:
-    #         user = User.objects.get(email=request.POST.get('email'))
-    #         print(user)
-
-        # if otp:
-        #     if otp == user.otp:
-        #         # data = {
-        #         #     'otp': ['OTP incorrect!'],
-        #         # }
-        #         form.errors.update('otp', ['OTP incorrect!'])
-        #     else:
-        #         # data = {
-        #         #     'otp': ['OTP correct!'],
-        #         # }
-        #         form.errors.update('otp', ['OTP correct!'])
-        # return HttpResponse(json.dumps(form.errors))
-
     context = {
         'form': form,
         'page': 'password-reset',
@@ -338,23 +286,6 @@ def logoutUser(request):
 def profilePage(request):
     channels = request.user.channel_set.all()
     library = getVideosFromLibrary(request)
-
-    # request.user.notifications.add(Video.objects.get(id=1))
-
-    # notification = Notifications.objects.create(
-    #     video = Video.objects.get(id=1),
-    #     user = request.user,
-    # )
-    # notification.save()
-
-    # print([u.video for u in Notifications.objects.all()])
-    # print([n.video.channel_name for n in request.user.notifications_set.all()])
-
-    # print(request.user.comment_set.all())
-    # print([user for user in Channel.objects.get(id=1).subscriptions.all()])
-    # print(request.user.notifications_set.all())
-    # print(Notifications.objects.all()[0].video.uploaded)
-
 
     context = {
         'channels': channels,
@@ -440,8 +371,6 @@ def checkHandle(request):
 
 @login_required(login_url='login')
 def updateChannel(request, channel_id):
-    # print(request.user.channel_set.all()[0])
-    # form = UpdateChannelForm(instance=request.user.channel_set.all()[0])
     channel = Channel.objects.get(id=channel_id)
     form = UpdateChannelForm(instance=channel)
 
@@ -544,12 +473,7 @@ def videoPlayer(request, pk):
 
 @login_required(login_url='login')
 def editComment(request, video_id, comment_id):
-    print()
-    print(request.method)
-    print()
-
     if request.method == "POST":
-        print(request.POST)
         comment = Comment.objects.get(id=comment_id)
         comment.comments = request.POST.get('comment')
         comment.save()
@@ -570,26 +494,8 @@ def videoUpload(request, channel_id):
     form = VideoUploadForm()
 
     if request.method == 'POST':
-        # updated_form = request.POST.copy()
-        # updated_form['tags'] = None
         channel = Channel.objects.get(id=channel_id)
         thumbnail = request.FILES.get('thumbnail')
-        # tags = request.POST.getlist('tags')
-
-        # tags_id = []
-        # if type(tags) == 'str':
-        #     t, created = Tag.objects.get_or_create(tag=tags)
-        #     tags_id.append(t.id)
-        #     updated_form['tags'] = t.id
-        # else:
-        #     first = True
-        #     for tag in tags:
-        #         t, created = Tag.objects.get_or_create(tag=tag)
-        #         tags_id.append(t.id)
-        #         if first:
-        #             updated_form['tags'] = t.id
-        #         else:
-        #             updated_form.update({'tags': t.id})
                 
         tags_id ,form = cleanVideoUploadForm(request)
 
@@ -628,29 +534,10 @@ def editVideo(request, video_id):
     form = VideoUploadForm(instance=video)
 
     if request.method == "POST":
-        # updated_form = request.POST.copy()
-        # updated_form['tags'] = None
         thumbnail = request.FILES.get('thumbnail')
         
         if thumbnail:            
             video.thumbnail = thumbnail
-
-        # tags = request.POST.getlist('tags')
-        # tags_id = []
-        # if type(tags) == 'str':
-        #     t, created = Tag.objects.get_or_create(tag=tags)
-        #     tags_id.append(t.id)
-        #     updated_form['tags'] = t.id
-        # else:
-        #     first = True
-        #     for tag in tags:
-        #         t, created = Tag.objects.get_or_create(tag=tag)
-        #         tags_id.append(t.id)
-        #         if first:
-        #             updated_form['tags'] = t.id
-        #             first = False
-        #         else:
-        #             updated_form.update({'tags': t.id})
 
         tags_id, form = cleanVideoUploadForm(request)
         if form.is_valid():
@@ -703,9 +590,6 @@ def unsubscribeChannel(request, channel_id):
 @login_required(login_url='login')
 def likeVideo(request, video_id):
     if request.method == 'POST':
-        print()
-        print(request.method)
-        print()
         video = Video.objects.get(id=video_id)
 
         request.user.likes.add(video)
@@ -742,7 +626,6 @@ def toggleIncognitoMode(request):
         request.user.incognito_mode = True
     
     request.user.save()
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return redirect('home')
 
 
@@ -750,12 +633,10 @@ def channelPage(request, pk):
     channel = Channel.objects.get(id=pk)
     videos = channel.video_set.all()
     other_channels = channel.channel_admin.channel_set.all()
-    # total_views = sum([video.views for video in videos])
 
     context = {
         'channel': channel,
         'videos': videos,
-        # 'total_views': total_views,
         'other_channels': other_channels,
         'subscribed': True if request.user.is_authenticated and channel in request.user.subscriptions.all() else False,
     }
