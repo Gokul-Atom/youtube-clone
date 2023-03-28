@@ -101,24 +101,31 @@ function deleteFields(e) {
 // navbar
 function revealSearchbar() {
     let searchIcon = document.querySelector("#navbarSupportedContent > ul > li:nth-child(1) > a > svg");
+    let secondEl = document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg");
     
-    document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.cssText = "all 1s ease";
+    if (secondEl) {
+        document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.cssText = "all 1s ease";
+    }
     
     if (navbarSearchbar.classList.contains("reveal-searchbar")) {
         navbarSearchbar.classList.remove("reveal-searchbar");
         searchIcon.innerHTML = `
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
         `
-        document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.width = "16px";
-        document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").parentElement.style.padding = "8px";
+        if (secondEl) {
+            document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.width = "16px";
+            document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").parentElement.style.padding = "8px";
+        }
     } else {
         navbarSearchbar.classList.add("reveal-searchbar");
         searchIcon.innerHTML = `
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             `;
-        document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.width = "0px";
-        document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").parentElement.style.padding = "0px";
+        if (secondEl) {
+            document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").style.width = "0px";
+            document.querySelector("#navbarSupportedContent > ul > li:nth-child(2) > a > svg").parentElement.style.padding = "0px";
+        }
 
         setTimeout(function() {
             document.querySelector("#navbar-search > input").focus();
