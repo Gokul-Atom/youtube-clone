@@ -1,0 +1,87 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="channel-div">
+    <img class="cover-photo" src="{{channel.cover_photo.url}}" alt="{{channel.name}}-cover-photo">
+    <div class="text-center">
+        <img class="rounded-circle my-2 channel-logo" src="{{channel.logo.url}}" alt="{{channel.name}}-logo">
+        <h2 class="text-light">{{channel.name}}</h2>
+        <p class="text-light">@{{channel.handle}}</p>
+        <p class="text-light"><span id="subs-count">{{channel.subscriptions.count}}</span> subscribers {{channel.video_set.count}} videos {{channel.total_views}} views</p>
+        
+        {% if request.user.is_authenticated %}
+            {% if request.user == channel.channel_admin %}
+            <div class="d-flex justify-content-center">
+                <a class="text-decoration-none text-danger fw-bold px-3 py-1 mx-2 bg-light rounded-pill subscribe-btn" role="button" href="{% url 'update-channel' channel.id %}">Edit Channel</a>
+                <a class="text-decoration-none text-danger fw-bold px-3 py-1 mx-2 bg-light rounded-pill subscribe-btn" role="button" href="{% url 'video-upload' channel.id %}">Upload Video</a>
+            </div>
+            {% else %}
+                {% if subscribed %}
+                <a id="subs-btn" class="text-decoration-none text-danger fw-bold px-3 py-1 bg-light rounded-pill subscribe-btn" role="button" data-url="{% url 'unsubscribe' channel.id %}" href="javascript:;" onclick="unsubscribeChannel(this);">Unsubscribe</a>
+                {% else %}
+                <a id="subs-btn" class="text-decoration-none text-danger fw-bold px-3 py-1 bg-light rounded-pill subscribe-btn" role="button" data-url="{% url 'subscribe' channel.id %}" href="javascript:;" onclick="subscribeChannel(this);">Subscribe</a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <hr>
+
+    <div class="d-flex mx-2 pb-2 text-light sticky-top">
+        <ul class="nav nav-pills">
+            <li class="nav-item active">
+                <a class="nav-link py-1 text-light text-uppercase" data-toggle="tab" href="#videos">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-1 text-light text-uppercase" data-toggle="tab" href="#other-channels">Other Channels</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-1 text-light text-uppercase" data-toggle="tab" href="#about">About</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content pb-5">
+        <div class="tab-pane active" id="videos">
+            {% if videos %}
+            {% include 'home/video-component.html' %}
+
+            {% else %}
+            <div class="ms-3">
+                <p class="text-light">This channel has not posted any videos.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-pane" id="other-channels">
+            {% if other_channels %}
+            <div class="mx-3">
+            {% for ch in other_channels %}
+                {% if channel.id != ch.id %}
+                <a class="text-decoration-none" href="{% url 'channel-page' ch.id %}">
+                    <div class="d-flex ms-3 my-2 align-items-center">
+                        <img class="rounded-circle me-2" src="{{ch.logo.url}}" alt="{{ch.name}}" srcset="">
+                        <p class="text-light m-0">{{ch.name}}</p>
+                    </div>
+                </a>
+                {% endif %}
+            {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="ms-3">
+                <p class="text-light ms-2">This user has no other channels.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-pane" id="about">
+            {% include 'home/channel-page-about.html' %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

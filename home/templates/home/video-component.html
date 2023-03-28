@@ -1,0 +1,27 @@
+<ul class="ps-0 d-flex flex-wrap justify-content-center video-component">
+    {% for video in videos %}
+    {% if this_video.id != video.id %}
+    <div class="m-2">
+        <li class="list-unstyled">
+            <a class="text-decoration-none" href="{% url 'video-player' video.id %}">
+                <div class="d-flex flex-column video-group">
+                    <div>
+                        <img class="video-thumbnail rounded-3 mx-auto" src="{{video.thumbnail.url}}" alt="{{video.title}}">
+                    </div>
+                    <div class="video-info d-flex">
+                        <div>
+                            <img class="channel-logo m-3 ms-0 rounded-circle" src="{{video.channel_name.logo.url}}" alt="" srcset="">
+                        </div>
+                        <div>
+                            <h6 class="mb-0 text-white text-break">{{video}}</h6>
+                            <p class="mb-0 text-light mb-0 text-break">{{video.channel_name}}</p>
+                            <p class="mb-0 text-muted text-break">{{video.views}} views &bull; {{video.uploaded | timesince }} ago</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+    </div>
+    {% endif %}
+    {% endfor %}
+</ul>

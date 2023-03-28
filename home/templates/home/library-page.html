@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="text-white p-2" id="my-library">
+    <h5>My Library</h5>
+    {% if videos %}
+    {% include 'home/video-component.html' %}
+    {% else %}
+    <p class="text-light">You have not watched any videos yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

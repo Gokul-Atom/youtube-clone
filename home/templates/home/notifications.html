@@ -1,0 +1,23 @@
+<div class="">
+    <div>
+        {% for notif in request.user.notifications_set.all %}
+        <div>
+            <a href="{% url 'video-player' notif.video.id %}" class="d-flex link-light text-decoration-none">
+                <div>
+                    <img class="rounded-circle channel-logo" src="{{notif.video.channel_name.logo.url}}" alt="{{notif.video.channel_name}}">
+                </div>
+                <div>
+                    <div class="d-flex flex-column">
+                        <p>{{notif.video.channel_name}} uploaded: {{notif.video.title}}</p>
+                        <small class="text-muted">{{notif.video.uploaded | timesince}} ago</small>                        
+                    </div>
+                </div>
+                <div>
+                    <img class="channel-video" src="{{notif.video.thumbnail.url}}" alt="{{notif.video.title}}">
+                </div>
+            </a>
+        </div>
+        <hr>
+        {% endfor %}
+    </div>
+</div>

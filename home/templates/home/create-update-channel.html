@@ -1,0 +1,187 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <label for="">{{field.label}}</label>
+    {{field}}
+    {% endfor %}
+    <input type="submit" value="sub">
+</form> -->
+<!-- <img src="{{channel_logo.url}}" alt="" srcset=""> -->
+{% if channel %}
+<div class="m-auto p-3 update-channel">
+
+    <div class="d-flex">
+        <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+        </a>
+        <h5 class="text-light">Update Channel - [{{form.name.value}}]</h5>
+    </div>
+    
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        <label class="form-label" for="cover_photo">Cover photo (current)</label>
+        <div>
+            <img class="cover-photo" src="{{channel.cover_photo.url}}">
+
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadCoverPhoto()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="cover_photo" accept="image/*" id="id_cover_photo" hidden>
+        </div>
+        
+        <label class="form-label" for="name">Channel Name</label>
+        <input  class="form-control" type="text" name="name" placeholder="Channel Name" value="{{form.name.value}}" maxlength="200" required id="id_name">
+        <ul id="required-name" class="text-danger ps-0"></ul>
+
+        <label class="form-label w-100" for="">Channel Logo (current)</label>
+        <div>
+            <img class="channel-logo" src="{{channel.logo.url}}">
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadChannelLogo()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="logo" accept="image/*" id="id_logo" hidden>
+        </div>
+        
+        <label class="form-label" for="">Channel Description</label>
+        {% if form.description.value %}
+        <textarea class="form-control" name="description" placeholder="Few lines about this channel..." rows="10" id="id_description">{{form.description.value}}</textarea>
+        {% else %}
+        <textarea class="form-control" name="description" placeholder="Few lines about this channel..." rows="10" id="id_description"></textarea>
+        {% endif %}
+        
+        <label class="form-label" for="">Country</label>
+        {% if form.location.value %}
+        <input  class="form-control" type="text" name="location" placeholder="Eg.: India" value="{{form.location.value}}" maxlength="200" id="id_location">
+        {% else %}
+        <input  class="form-control" type="text" name="location" placeholder="Eg.: India" value="" maxlength="200" id="id_location">
+        {% endif %}
+
+        <label class="form-label" for="">Website</label>
+        {% if form.website.value %}
+        <input  class="form-control" type="url" name="website" placeholder="https://" value="{{form.website.value}}" maxlength="200" id="id_website">
+        {% else %}
+        <input  class="form-control" type="url" name="website" placeholder="https://" value="" maxlength="200" id="id_website">
+        {% endif %}
+        
+        <label class="form-label" for="">Facebook</label>
+        {% if form.facebook.value %}
+        <input  class="form-control" type="url" name="facebook" placeholder="https://" value="{{form.facebook.value}}" maxlength="200" id="id_facebook">
+        {% else %}
+        <input  class="form-control" type="url" name="facebook" placeholder="https://" value="" maxlength="200" id="id_facebook">
+        {% endif %}
+        
+        <label class="form-label" for="">Instagram</label>
+        {% if form.telegram.value %}
+        <input  class="form-control" type="url" name="instagram" placeholder="https://" value="{{form.instagram.value}}" maxlength="200" id="id_instagram">
+        {% else %}
+        <input  class="form-control" type="url" name="instagram" placeholder="https://" value="" maxlength="200" id="id_instagram">
+        {% endif %}
+        
+        <label class="form-label" for="">Twitter</label>
+        {% if form.twitter.value %}
+        <input  class="form-control" type="url" name="twitter" placeholder="https://" value="{{form.twitter.value}}" maxlength="200" id="id_twitter">
+        {% else %}
+        <input  class="form-control" type="url" name="twitter" placeholder="https://" value="" maxlength="200" id="id_twitter">
+        {% endif %}
+
+        <label class="form-label" for="">Whatsapp [country code + number]</label>
+        {% if form.whatsapp.value %}
+        <input  class="form-control" type="url" name="whatsapp" placeholder="+91XXXXXXXXXX" value="{{form.whatsapp.value}}" maxlength="200" id="id_whatsapp">
+        {% else %}
+        <input  class="form-control" type="url" name="whatsapp" placeholder="+91XXXXXXXXXX" value="" maxlength="200" id="id_whatsapp">
+        {% endif %}
+        
+        <input class="btn btn-primary mt-2" role="button" type="submit" value="Update">
+    </form>
+    <a data-url="{% url 'delete-channel' channel.id %}" data-value="{{channel.name}}" class="btn btn-danger mt-2" onclick="confirmDeletion(this)">Delete Channel</a>
+</div>
+
+{% else %}
+<div class="m-auto p-3 create-channel">
+
+    <div class="d-flex">
+        <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+        </a>
+        <h5 class="text-light">Create Channel</h5>
+    </div>
+
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        <label class="form-label" for="cover_photo">Cover photo</label>
+        <div>
+            <img class="cover-photo" src="{% static 'images/channel-cover-photo.png' %}">
+
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadCoverPhoto()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="cover_photo" accept="image/*" id="id_cover_photo" hidden>
+        </div>
+
+        <label class="form-label" for="name">Channel Name</label>
+        <input  class="form-control" type="text" name="name" placeholder="Channel Name" value="" maxlength="200" required id="id_name">
+        <ul id="required-name" class="text-danger ps-0"></ul>
+
+        <label class="form-label" for="handle">Channel Handle</label>
+        <input  class="form-control" type="text" name="handle" placeholder="Channel Handle" value="" maxlength="200" required id="id_handle">
+        <ul id="required-handle" class="text-danger ps-0"></ul>
+
+        <label class="form-label w-100" for="">Channel Logo</label>
+        <div>
+            <img class="channel-logo" src="{% static 'images/channel-thumbnail.png' %}">
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadChannelLogo()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="logo" accept="image/*" id="id_logo" hidden>
+        </div>
+        
+        <label class="form-label" for="">Channel Description</label>
+        <textarea class="form-control" name="description" placeholder="Few lines about this channel..." rows="10" id="id_description"></textarea>
+        
+        <label class="form-label" for="">Country</label>
+        <input  class="form-control" type="text" name="location" placeholder="Eg.: India" value="" maxlength="200" id="id_location">
+
+        <label class="form-label" for="">Website</label>
+        <input  class="form-control" type="url" name="website" placeholder="https://" value="" maxlength="200" id="id_website">
+        
+        <label class="form-label" for="">Facebook</label>
+        <input  class="form-control" type="url" name="facebook" placeholder="https://" value="" maxlength="200" id="id_facebook">
+        
+        <label class="form-label" for="">Instagram</label>
+        <input  class="form-control" type="url" name="instagram" placeholder="https://" value="" maxlength="200" id="id_instagram">
+        
+        <label class="form-label" for="">Twitter</label>
+        <input  class="form-control" type="url" name="twitter" placeholder="https://" value="" maxlength="200" id="id_twitter">
+
+        <label class="form-label" for="">Whatsapp [country code + number]</label>
+        <input  class="form-control" type="url" name="whatsapp" placeholder="+91XXXXXXXXXX" value="" maxlength="200" id="id_whatsapp">
+        
+        <input class="btn btn-primary mt-2" role="button" type="submit" value="Create">
+    </form>
+</div>
+{% endif %}
+
+<script>
+    const checkHandleUrl = "{% url 'check-handle' %}";
+</script>
+
+{% endblock %}

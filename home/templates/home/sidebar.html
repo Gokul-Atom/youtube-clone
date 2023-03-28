@@ -1,0 +1,61 @@
+{% load static %}
+
+<div class="flex-shrink-0 p-3 bg-dark overflow-auto sticky-top sidebar">
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1">
+        <a href="{% url 'home' %}" class="btn w-100 border-0 btn-dark text-start text-white text-decoration-none">
+            <svg class="icon ms-2 me-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+            </svg>
+            Home
+        </a>
+      </li>
+      <li class="mb-1">
+        <a href="{% url 'library' %}" class="btn w-100 border-0 btn-dark text-start text-white text-decoration-none">
+            <svg class="icon ms-2 me-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-collection-play-fill" viewBox="0 0 16 16">
+                <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6v7zm6.258-6.437a.5.5 0 0 1 .507.013l4 2.5a.5.5 0 0 1 0 .848l-4 2.5A.5.5 0 0 1 6 12V7a.5.5 0 0 1 .258-.437z"/>
+            </svg>
+            Library
+        </a>
+      </li>
+      <li class="border-top my-3"></li>
+      <li class="mb-1">
+        <a href="subscriptions" class="btn w-100 border-0 btn-dark text-start text-white text-decoration-none" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="true">
+            <svg class="icon ms-2 me-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-collection-play" viewBox="0 0 16 16">
+                <path d="M2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1zm2.765 5.576A.5.5 0 0 0 6 7v5a.5.5 0 0 0 .765.424l4-2.5a.5.5 0 0 0 0-.848l-4-2.5z"/>
+                <path d="M1.5 14.5A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zm13-1a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5h-13A.5.5 0 0 0 1 6v7a.5.5 0 0 0 .5.5h13z"/>
+            </svg>
+            Subscriptions
+        </a>
+        <div class="collapse show" id="orders-collapse" style="">
+          
+          {% include 'home/subscriptions.html' %}
+          
+        </div>
+      </li>
+      <li class="border-top my-3"></li>
+      <li class="mb-1">
+        <a href="profile"  class="btn w-100 border-0 btn-dark text-start text-white text-decoration-none" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
+            <svg class="icon ms-2 me-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+            </svg>
+            Account
+        </a>
+        <div class="collapse show" id="account-collapse" style="">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+            {% if request.user.is_authenticated %}
+            <li><a role="button" onclick="toggleNotifications()" class="link-light text-decoration-none rounded">Notifications</a></li>
+            <li><a href="{% url 'profile' %}" class="link-light text-decoration-none rounded">Profile</a></li>
+            <li><a href="{% url 'logout' %}" class="link-light text-decoration-none rounded">Sign out</a></li>
+
+            {% else %}
+            <li><a href="{% url 'login' %}" class="link-light text-decoration-none rounded">Login / Register</a></li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </li>
+      <li class="border-top my-3"></li>
+    </ul>
+  </div>

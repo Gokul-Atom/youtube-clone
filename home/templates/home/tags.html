@@ -1,0 +1,12 @@
+<div class="tags">
+    <ul class="d-flex ps-0 mb-0 overflow-auto">
+        <a class="text-decoration-none mx-1 link-light" href="{% url 'home' %}">
+            <li class="list-unstyled px-3 rounded-pill bg-dark">All</li>
+        </a>
+    {% for tag in tags %}
+        <a class="text-decoration-none mx-1 link-light" href="{% url 'home'%}?tag={{tag}}">
+            <li class="list-unstyled px-3 rounded-pill bg-dark">{{tag}}</li>
+        </a>
+    {% endfor %}
+    </ul>
+</div>

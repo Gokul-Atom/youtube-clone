@@ -1,0 +1,183 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if video %}
+<div class="video-upload mx-auto p-3">
+    <div class="d-flex">
+        <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+        </a>
+        <h2 class="text-light">Update Video</h2>
+    </div>
+
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+
+        {% for field in form %}
+        {% csrf_token %}
+
+        {% if field.label == "Tags" %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        <div class="selected-tags form-control">
+            <select name="tags" id="id_tags" class="multiple-selection" multiple="multiple">
+                {% for tag in tags %}
+                <option value="{{tag}}">{{tag}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex">
+            <!-- <input type="text" name="tags" list="tags-list"> -->
+            <!-- <datalist id="tags-list"> -->
+                
+            <!-- </datalist> -->
+
+            <!-- <a class="btn btn-light" role="button" onclick="addTag()">
+                <svg style="transform: scale(1.7) translateY(-1px);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </a> -->
+        </div>
+        <ul id="required-{{field.name}}" class="text-danger ps-0"></ul>
+
+        {% elif field.label == "Thumbnail" %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        <div>
+            <img class="video-thumbnail" src="{{ video.thumbnail.url }}">
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadThumbnail()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="thumbnail" accept="image/*" id="id_thumbnail" hidden>
+        </div>
+
+        {% else %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        {{field}}
+        <ul id="required-{{field.name}}" class="text-danger ps-0"></ul>
+        {% endif %}
+        {% endfor %}
+
+        <!-- <input type="text" name="video-tags" id="video-tags" hidden> -->
+
+        <input class="btn btn-primary px-3" role="button" type="submit" value="Submit">
+    </form>
+    <a data-url="{% url 'delete-video' video.id %}" data-value="{{video.title}}" class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#modal" onclick="confirmDeletion(this)">Delete Video</a>
+</div>
+
+{% else %}
+<div class="video-upload mx-auto p-3">
+    <div class="d-flex">
+        <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+        </a>
+        <h2 class="text-light">Upload Video</h2>
+    </div>
+
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+
+        {% for field in form %}
+        {% csrf_token %}
+
+        {% if field.label == "Tags" %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        <div class="selected-tags"></div>
+
+        <div class="flex">
+            <!-- <input type="text" name="tags" list="tags-list">
+            <datalist id="tags-list"> -->
+                <select name="tags" id="id_tags" class="multiple-selection" multiple="multiple">
+                    {% for tag in tags %}
+                    <option value="{{tag}}">{{tag}}</option>
+                    {% endfor %}
+                </select>
+            <!-- </datalist> -->
+            <!-- <a class="btn btn-light" role="button" onclick="addTag()">
+                <svg style="transform: scale(1.7) translateY(-1px);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                </svg>
+            </a> -->
+        </div>
+        <ul id="required-{{field.name}}" class="text-danger ps-0"></ul>
+
+        {% elif field.label == "Thumbnail" %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        <div>
+            <img class="video-thumbnail" src="{% static 'images/video-thumbnail.png' %}">
+            <a class="rounded-3 edit-btn" role="button" onclick="uploadThumbnail()">
+                <svg class="mx-1 text-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg>
+            </a>
+            <input  class="form-control" type="file" name="thumbnail" accept="image/*" id="id_thumbnail" hidden>
+        </div>
+
+        {% else %}
+        <label class="form-label" for="{{field.label}}">{{field.label}}</label>
+        {{field}}
+        <ul id="required-{{field.name}}" class="text-danger ps-0"></ul>
+        {% endif %}
+        {% endfor %}
+
+        <!-- <input type="text" name="video-tags" id="video-tags" hidden> -->
+
+        <input class="btn btn-primary px-3" role="button" type="submit" value="Submit">
+    </form>
+</div>
+{% endif %}
+
+<!-- <div>
+
+{% for field in form %}
+{{hello}}
+{{form.field}}
+{% endfor %}
+{{hello}}
+</div> -->
+
+<!-- <script>
+    let tagsList = [];
+</script>
+
+{% if video %}
+    {% for tag in video_tags %}
+    <script>
+        tags = document.querySelector(".selected-tags");
+
+        function includeTag(tag) {
+            tagsList.push(tag);
+            console.log(tag);
+            tags.innerHTML += `
+            <div>
+                <span>${tag}</span>
+                <a role="button" onclick="removeTag(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </a>
+            </div>
+            `;
+
+            document.querySelector("#video-tags").value += `${tag};`;
+        }
+        includeTag("{{tag}}");
+    </script>
+    {% endfor %}
+{% endif %} -->
+
+<script>
+    tags = JSON.parse("{{video_tags}}".replace(/&quot;/g,'"'));
+    console.log(tags);
+    if (tags) {
+        tags.forEach(tag => {
+            document.querySelector(`#id_tags option[value=${tag}]`).setAttribute("selected", "");
+        });
+    }
+</script>
+
+{% endblock %}

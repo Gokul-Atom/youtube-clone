@@ -1,0 +1,82 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<style>
+    .loading-container {
+        position: absolute;
+        top: calc(50vh - 100px);
+        left: calc(50vw - 100px);
+    }
+
+    .loading::before {
+        content: "";
+        position: absolute;
+        top: calc(50% - 150px);
+        left: calc(50% - 150px);
+        width: 300px;
+        height: 300px;
+        background-color: #dc3545;
+        /* z-index: 10; */
+    }
+
+    .loading {
+        position: relative;
+        margin: auto;
+        width: 200px;
+        height: 200px;
+        border: none;
+        border-radius: 50%;
+        overflow: hidden;
+        animation: rotate 5s linear infinite;
+    }
+
+    .loading::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        background-color: black;
+        z-index: 2;
+        border-radius: 0%;
+    }
+
+    .loading h1 {
+        color: white;
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+
+<div class="d-flex justify-content-center">
+    <div class="spinner-border text-danger" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" type="button" disabled>
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span class="visually-hidden">Loading...</span>
+  </button>
+
+<div class="loading-container" hidden>
+    <div class="loading">
+    </div>
+</div>
+
+<script>
+    function home() {
+        let url = location.href
+        url = url.replace('load/', '')
+        location.replace(url)
+    }
+    // home();
+</script>
+{% endblock %}

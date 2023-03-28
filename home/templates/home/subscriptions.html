@@ -1,0 +1,21 @@
+<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+{% if request.user.is_authenticated %}
+
+  {% if request.user.subscriptions.all %}
+    {% for channel in request.user.subscriptions.all %}
+      <li class="d-flex align-items-center">
+        <img class="me-2 rounded-circle avatar" src="{{channel.logo.url}}" alt="" srcset="">
+        <a href="{% url 'channel-page' channel.id %}" class="link-light text-decoration-none rounded">{{channel}}</a>
+      </li>
+    {% endfor %}
+
+  {% else %}
+    <li class="d-flex align-items-center">
+      <p class="text-light m-0">You have not subscribed to any channels yet.</p>
+    </li>
+  {% endif %}
+
+{% else %}
+  <li><a href="{% url 'login' %}" class="link-light text-decoration-none rounded">Login to view subscriptions</a></li>
+{% endif %}
+</ul>

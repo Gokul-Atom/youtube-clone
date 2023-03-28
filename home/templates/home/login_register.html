@@ -1,0 +1,130 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="mx-auto login-register">
+
+    {% if page == 'login' %}
+    <div class="p-3 login">
+
+        <div class="d-flex">
+            <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+            </a>
+            <h2 class="text-light">Login</h2>
+        </div>
+
+        <form action="" method="POST" novalidate>
+            {% csrf_token %}
+            <div>
+                <label class="text-light form-label" for="email">Email</label>
+                <input class="form-control" type="email" name="email">
+            </div>
+
+            <div>
+                <label class="text-light form-label" for="password">Password</label>
+                <input class="form-control" type="password" name="password">
+            </div>
+
+            <button class="btn btn-primary my-2" type="submit">Submit</button>
+        </form>
+
+        <a class="text-decoration-none" href="{% url 'reset-password' %}">Forget password?</a>
+        <p class="text-muted">New to youtube? <a class="text-decoration-none" href="{% url 'register' %}">Register here.</a></p>
+
+    </div>
+    {% endif %}
+
+    {% if page == "register" %}
+    <div class="p-3 register">
+
+        <div class="d-flex">
+            <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+            </a>
+            <h2 class="text-light">Register</h2>
+        </div>
+
+        <form action="" method="POST" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div>
+                <label class="text-light form-label" for="{{field.label}}">{{field.label}}</label>
+                {{field}}
+                {% if field.label == "Username" %}
+                <div id="username-availability" class="text-light">
+                </div>
+                {% endif %}
+
+                <ul id="required-{{field.name}}" class="text-danger ps-0"></ul>
+
+                <div class="form-text">
+                    {{field.help_text}}
+                </div>
+            </div>
+            {% endfor %}
+            <button class="btn btn-primary my-2" type="submit">Submit</button>
+        </form>
+
+        <p class="text-muted">Already registered? <a class="text-decoration-none" href="{% url 'login' %}">Login here.</a></p>
+
+    </div>
+    {% endif %}
+
+    {% if page == 'password-reset' %}
+    <div class="p-3 password-reset">
+
+        <div class="d-flex">
+            <a class="mx-2" href="{{request.META.HTTP_REFERER}}">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+            </a>
+            <h2 class="text-light">Reset Password</h2>
+        </div>
+
+        <form>
+            {% csrf_token %}
+            <div>
+                <label class="text-light form-label" for="email">Email</label>
+                <input class="form-control" type="email" name="email" id="id_email">
+                <ul class="text-danger ps-0" id="required-email"></ul>
+            </div>
+            <div id="id_reset_form" hidden>
+                <div>
+                    <label class="text-light form-label" for="otp">OTP</label>
+                    <input class="form-control" type="text" name="otp" id="id_otp">
+                    <ul class="text-danger ps-0" id="required-otp"></ul>
+                </div>
+
+                <div class="password1" hidden>
+                    <label class="text-light form-label" for="password1">Password</label>
+                    <input class="form-control" type="password" name="password1" id="id_password1">
+                    <ul class="text-danger ps-0" id="required-password1"></ul>
+                </div>
+
+                <div class="password2" hidden>
+                    <label class="text-light form-label" for="password2">Confirm password</label>
+                    <input class="form-control" type="password" name="password2" id="id_password2">
+                    <ul class="text-danger ps-0" id="required-password2"></ul>
+                </div>
+            </div>
+
+            <button class="btn btn-primary my-2" type="submit" disabled>Reset Password</button>
+        </form>
+
+        <p class="text-muted">New to youtube? <a class="text-decoration-none" href="{% url 'register' %}">Register here.</a></p>
+
+    </div>
+    {% endif %}
+
+</div>
+<script>
+    const checkUsernameUrl = "{% url 'check-username' %}";
+    const resetPasswordUrl = "{% url 'change-password' %}";
+</script>
+{% endblock %}

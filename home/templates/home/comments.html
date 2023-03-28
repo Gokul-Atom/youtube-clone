@@ -1,0 +1,28 @@
+<ul id="id_comments" data-count="{{count}}" class="ps-0">
+    {% if comments %}
+
+    {% for comment in comments %}
+    <li class="list-unstyled">
+        <div>
+            <div class="d-flex justify-content-between">
+                <img class="rounded-circle" src="{{comment.commented_by.avatar.url}}" alt="">
+                <h6 class="text-light text-break me-auto ms-2 comment-user">{{comment.commented_by.username}}</h6>
+                <small class="text-white">{{comment.created | timesince}} ago</small>
+            </div>
+            <p class="text-light text-break comment-text">{{comment.comments}}</p>
+        </div>
+
+        {% if request.user == comment.commented_by %}
+        <div class="d-flex mb-2">
+            <a role="button" data-value="{{comment}}" data-url="{% url 'edit-comment' this_video.id comment.id %}" class="text-decoration-none me-2 fs-6" data-bs-toggle="modal" data-bs-target="#comment-modal" onclick="editComment(this);">Edit</a>
+            <a role="button" data-value="{{comment}}" data-url="{% url 'delete-comment' this_video.id comment.id %}" class="text-decoration-none fs-6" data-bs-toggle="modal" data-bs-target="#modal" onclick="confirmDeletion(this);">Delete</a>
+        </div>
+        {% endif %}
+    </li>
+    {% endfor %}
+
+    {% else %}
+    <li class="list-unstyled text-light">Be the first to comment.</li>
+
+    {% endif %}
+</ul>
